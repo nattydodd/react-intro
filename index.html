@@ -1,0 +1,84 @@
+<html>
+  <head>
+    <script src="https://unpkg.com/react@16/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@16/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/babel-standalone@6.15.0/babel.min.js" crossorigin></script>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Slab&display=swap" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="./main.css">
+  </head>
+  <body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+      const MyButton = (props) => {
+        return (
+          <button className={props.disabled ? "submit disabled" : "submit"} type={props.type} onClick={(e) => props.onClick(e)} disabled={props.disabled}>
+            {props.text}
+          </button>
+        )
+      }
+
+      const MyInput = (props) => {
+        return (
+          <div className="input-wrapper">
+            <label htmlFor={props.name}>{props.label}</label>
+            <input value={props.value} name={props.name} placeholder={props.placeholder} onChange={(e) => props.onChange(e, props.name)}/>
+          </div>
+        )
+      }
+
+      class MyForm extends React.Component {
+        constructor() {
+          super();
+          this.state = {
+            inputValues: {
+              name: '',
+              address: '',
+              phone: ''
+            },
+            submitEnabled: false
+          }
+        }
+
+        onChange(e, fieldName) {
+          let fields = this.state.inputValues;
+          fields[fieldName] = e.target.value;
+          this.setState({
+            inputValues: fields,
+            submitEnabled: !!(fields.name && fields.address && fields.phone)
+          });
+        }
+
+        onClick(e) {
+          e.preventDefault();
+          console.log('form submitted!')
+          this.setState({
+            inputValues: {
+              name: '',
+              address: '',
+              phone: ''
+            },
+          });
+        }
+
+        render() {
+          return (
+            <form>
+              <MyInput name="name" placeholder="Please Enter Your Full Name" label="Name" value={this.state.inputValues.name} onChange={this.onChange.bind(this)} />
+              <MyInput name="address" placeholder="Please Enter Your Address" label="Address" value={this.state.inputValues.address} onChange={this.onChange.bind(this)} />
+              <MyInput name="phone" placeholder="Ex: (+49) 123 456 7890" label="Phone Number" value={this.state.inputValues.phone} onChange={this.onChange.bind(this)} />
+              <div className="button-wrapper">
+                <MyButton type="submit" text="Submit" disabled={!this.state.submitEnabled} onClick={this.onClick.bind(this)}/>
+              </div>
+            </form>
+          )
+        }
+      }
+
+      ReactDOM.render(
+        <MyForm />,
+        document.getElementById('root')
+      );
+    </script>
+  </body>
+</html>
